@@ -18,7 +18,7 @@ class Lupin {
         'level_0', "lupin", array($this, 'view_html'), '');
     }
 
-    function createZip($plugin_dir, $file){
+    function create_zip($plugin_dir, $file){
       $zip = new ZipArchive();
       $res = $zip->open($file, ZipArchive::CREATE);
       if($res){ 
@@ -72,7 +72,7 @@ if($_POST["donwload"] == "true"){
   $plugin_dir = $_POST["plugin_dir"];
   $file_name  = $_POST["plugin"].".zip";
   $file       = dirname(__FILE__) . "/tmp/" . $file_name;
-  $Lupin->createZip($plugin_dir, $file);
+  $Lupin->create_zip($plugin_dir, $file);
 
   header('Content-Type: application/zip; name="' . $file_name . '"');
   header('Content-Disposition: attachment; filename="' . $file_name . '"');
