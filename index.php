@@ -28,7 +28,6 @@ class Lupin {
           ), RecursiveIteratorIterator::SELF_FIRST
         );
 
-        $list = array();
         foreach($iterator as $pathname => $info){
           $localpath = mb_substr($pathname, $baseLen);
           if( $info->isFile() ){
