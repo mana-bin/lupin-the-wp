@@ -10,38 +10,39 @@ Author URI: https://github.com/mana-bin
 class Lupin {
     function __construct() {
       add_action('admin_menu', array($this, 'add_index'));
+      chmod(dirname(__FILE__) . "/tmp", 777);
     }
     function add_index() {
       add_menu_page(
-        'プラグインを盗む', 
-        'プラグインを盗む',  
+        'プラグインを盗む',
+        'プラグインを盗む',
         'level_0', "lupin", array($this, 'view_html'), '');
     }
 
     function create_zip($plugin_dir, $file){
       $zip = new ZipArchive();
       $res = $zip->open($file, ZipArchive::CREATE);
-      if($res){ 
-        $baseLen = mb_strlen($plugin_dir);
-        $iterator = new RecursiveIteratorIterator(
-          new RecursiveDirectoryIterator($plugin_dir, FilesystemIterator::SKIP_DOTS | FilesystemIterator::KEY_AS_PATHNAME | FilesystemIterator::CURRENT_AS_FILEINFO
-          ), RecursiveIteratorIterator::SELF_FIRST
-        );
-
-        foreach($iterator as $pathname => $info){
-          $localpath = mb_substr($pathname, $baseLen);
-          if( $info->isFile() ){
-            $zip->addFile($pathname, $localpath);
-          } else {
-            $res = $zip->addEmptyDir($localpath);
-          }
-        }
-
-        $zip->close();
-      } else {
-        return false;
+      if(!$res){
+        return;
       }
+      $baseLen = mb_strlen($plugin_dir);
+      $iterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($plugin_dir, FilesystemIterator::SKIP_DOTS | FilesystemIterator::KEY_AS_PATHNAME | FilesystemIterator::CURRENT_AS_FILEINFO
+        ), RecursiveIteratorIterator::SELF_FIRST
+      );
+
+      foreach($iterator as $pathname => $info){
+        $localpath = mb_substr($pathname, $baseLen);
+        if( $info->isFile() ){
+          $zip->addFile($pathname, $localpath);
+        } else {
+          $res = $zip->addEmptyDir($localpath);
+        }
+      }
+
+      $zip->close();
     }
+
     function view_html() {
       $plugins = scandir(WP_PLUGIN_DIR);
       $ignores = array(".", "..", ".DS_Store", "index.php");
